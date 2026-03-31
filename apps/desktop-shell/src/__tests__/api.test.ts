@@ -27,7 +27,7 @@ describe("API Client", () => {
       ok: true,
       json: () =>
         Promise.resolve({
-          data: { session_id: "s-1", user_id: "u-1", expires_at: "" },
+          data: { session_id: "s-1", token: "tok-1", user_id: "u-1", expires_at: "" },
         }),
     });
     const result = await api.login("admin", "password");

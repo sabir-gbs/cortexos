@@ -89,6 +89,7 @@ describe("DesktopShell", () => {
   it("handles login submission", async () => {
     const mockLogin = vi.mocked(api.login).mockResolvedValue({
       session_id: "s-1",
+      token: "tok-1",
       user_id: "u-1",
       expires_at: "2099-01-01T00:00:00Z",
     });
@@ -138,6 +139,7 @@ describe("DesktopShell", () => {
   it("renders desktop shell after successful login", async () => {
     vi.mocked(api.login).mockResolvedValue({
       session_id: "s-1",
+      token: "tok-1",
       user_id: "u-1",
       expires_at: "2099-01-01T00:00:00Z",
     });

@@ -143,6 +143,7 @@ export interface ContextMenuItem {
 
 export interface LoginResponse {
   session_id: string;
+  token: string;
   user_id: string;
   expires_at: string;
 }

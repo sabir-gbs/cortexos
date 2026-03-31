@@ -325,8 +325,8 @@ async fn auth_login_handler(
     let result = routes::auth::login(&state, req).await;
     match result {
         Ok(resp_data) => {
-            let session_id = &resp_data.data.session_id;
-            let cookie = session_cookie_header(session_id);
+            let session_token = &resp_data.data.token;
+            let cookie = session_cookie_header(session_token);
             let mut resp = (StatusCode::OK, Json(resp_data)).into_response();
             if let Ok(val) = axum::http::HeaderValue::from_str(&cookie) {
                 resp.headers_mut().insert("set-cookie", val);
@@ -930,7 +930,7 @@ fn session_cookie_header(session_id: &str) -> String {
 
 fn clearing_cookie_header() -> String {
     format!(
-        "{}=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0",
+        "{}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0",
         routes::auth::SESSION_COOKIE_NAME
     )
 }

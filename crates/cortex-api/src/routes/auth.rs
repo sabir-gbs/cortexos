@@ -14,6 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LoginResponse {
     pub session_id: String,
+    pub token: String,
     pub user_id: String,
     pub expires_at: String,
 }
@@ -23,7 +24,7 @@ pub const SESSION_COOKIE_NAME: &str = "cortex_session";
 
 /// Build a Set-Cookie header value for the session token.
 pub fn session_cookie_value(token: &str) -> String {
-    format!("{SESSION_COOKIE_NAME}={token}; HttpOnly; Secure; SameSite=Strict; Path=/")
+    format!("{SESSION_COOKIE_NAME}={token}; HttpOnly; SameSite=Lax; Path=/")
 }
 
 /// Response body for profile queries.
@@ -50,6 +51,7 @@ pub async fn login(state: &AppState, req: LoginRequest) -> Result<SuccessRespons
     Ok(SuccessResponse {
         data: LoginResponse {
             session_id: session.session_id.0.to_string(),
+            token: session.token.0.clone(),
             user_id: session.user_id.0.to_string(),
             expires_at: session.expires_at,
         },

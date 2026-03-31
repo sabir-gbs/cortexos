@@ -39,7 +39,7 @@ impl Default for CorsConfig {
                 "X-Request-Id".to_string(),
             ],
             expose_headers: vec!["X-Request-Id".to_string()],
-            allow_credentials: false,
+            allow_credentials: true,
             max_age_secs: 86400,
         }
     }
