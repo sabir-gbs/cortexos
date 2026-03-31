@@ -1,0 +1,63 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/cortex-core",
+    "crates/cortex-config",
+    "crates/cortex-db",
+    "crates/cortex-api",
+    "crates/cortex-auth",
+    "crates/cortex-policy",
+    "crates/cortex-settings",
+    "crates/cortex-ai",
+    "crates/cortex-files",
+    "crates/cortex-search",
+    "crates/cortex-notify",
+    "crates/cortex-observability",
+    "crates/cortex-runtime",
+    "crates/cortex-sdk",
+    "crates/cortex-admin",
+    "crates/cortex-wm",
+    "crates/cortex-server",
+    "tools/check-deps",
+    "tests/e2e",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+rust-version = "1.85"
+
+[workspace.dependencies]
+# Workspace-internal crates
+cortex-core = { path = "crates/cortex-core" }
+cortex-config = { path = "crates/cortex-config" }
+cortex-db = { path = "crates/cortex-db" }
+cortex-auth = { path = "crates/cortex-auth" }
+cortex-policy = { path = "crates/cortex-policy" }
+cortex-settings = { path = "crates/cortex-settings" }
+cortex-ai = { path = "crates/cortex-ai" }
+cortex-files = { path = "crates/cortex-files" }
+cortex-search = { path = "crates/cortex-search" }
+cortex-notify = { path = "crates/cortex-notify" }
+cortex-observability = { path = "crates/cortex-observability" }
+cortex-runtime = { path = "crates/cortex-runtime" }
+cortex-sdk = { path = "crates/cortex-sdk" }
+cortex-admin = { path = "crates/cortex-admin" }
+cortex-api = { path = "crates/cortex-api" }
+cortex-wm = { path = "crates/cortex-wm" }
+cortex-server = { path = "crates/cortex-server" }
+
+# External dependencies (shared versions)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+uuid = { version = "1.0", features = ["v7", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "2.0"
+rusqlite = { version = "0.32", features = ["bundled"] }
+anyhow = "1.0"
+sha2 = "0.10"
+base64 = "0.22"

@@ -1,0 +1,18 @@
+[package]
+name = "cortex-search"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+cortex-core = { workspace = true }
+cortex-config = { workspace = true }
+cortex-db = { workspace = true }
+cortex-files = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+rusqlite = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }

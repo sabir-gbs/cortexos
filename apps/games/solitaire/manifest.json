@@ -1,0 +1,26 @@
+{
+  "id": "com.cortexos.games.solitaire",
+  "name": "Solitaire",
+  "version": "1.0.0",
+  "description": "Classic Klondike solitaire card game",
+  "entry_point": "src/index.tsx",
+  "icon": "icon.svg",
+  "permissions": [],
+  "capabilities": {
+    "ai": false,
+    "background_execution": false,
+    "autostart": false,
+    "max_file_size": 104857600,
+    "system_tray": false,
+    "file_handlers": []
+  },
+  "min_os_version": "0.1.0",
+  "author": {
+    "name": "CortexOS Team"
+  },
+  "category": "games",
+  "game": {
+    "difficulties": ["draw1", "draw3"],
+    "defaultDifficulty": "draw1"
+  }
+}

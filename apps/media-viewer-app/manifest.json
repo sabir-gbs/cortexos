@@ -1,0 +1,28 @@
+{
+  "id": "com.cortexos.media-viewer",
+  "name": "Media Viewer",
+  "version": "1.0.0",
+  "description": "View images, play audio and video files",
+  "entry_point": "src/index.tsx",
+  "icon": "icon.svg",
+  "permissions": [
+    {
+      "permission": "files.read",
+      "required": true,
+      "reason": "Open and view media files"
+    }
+  ],
+  "capabilities": {
+    "ai": false,
+    "background_execution": false,
+    "autostart": false,
+    "max_file_size": 104857600,
+    "system_tray": false,
+    "file_handlers": []
+  },
+  "min_os_version": "0.1.0",
+  "author": {
+    "name": "CortexOS Team"
+  },
+  "category": "media"
+}

@@ -1,0 +1,7 @@
+.env
+.claude/settings.local.json
+node_modules/
+target/
+dist/
+coverage/
+e2e/test-results/

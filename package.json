@@ -1,0 +1,23 @@
+{
+  "name": "cortexos",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "pnpm --filter desktop-shell dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r --filter '!cortexos-e2e' test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "e2e": "pnpm --filter cortexos-e2e test",
+    "e2e:headed": "pnpm --filter cortexos-e2e test:headed"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.1.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.58.0"
+  }
+}

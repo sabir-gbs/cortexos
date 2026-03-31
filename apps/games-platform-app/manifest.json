@@ -1,0 +1,22 @@
+{
+  "id": "com.cortexos.games",
+  "name": "Games",
+  "version": "1.0.0",
+  "description": "Games platform hub for CortexOS",
+  "entry_point": "src/main.ts",
+  "icon": "icon.svg",
+  "permissions": [],
+  "capabilities": {
+    "ai": false,
+    "background_execution": false,
+    "autostart": false,
+    "max_file_size": 104857600,
+    "system_tray": false,
+    "file_handlers": []
+  },
+  "min_os_version": "0.1.0",
+  "author": {
+    "name": "CortexOS Team"
+  },
+  "category": "games"
+}

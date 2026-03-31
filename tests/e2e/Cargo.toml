@@ -1,0 +1,21 @@
+[package]
+name = "cortex-e2e"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+cortex-core = { workspace = true }
+cortex-observability = { workspace = true }
+cortex-api = { workspace = true }
+cortex-config = { workspace = true }
+cortex-db = { workspace = true }
+cortex-auth = { workspace = true }
+serde_json = { workspace = true }
+serde = { workspace = true }
+chrono = { workspace = true }
+tokio = { workspace = true }
+axum = { version = "0.8", features = ["ws"] }
+tower = { version = "0.5" }
+http-body-util = "0.1"

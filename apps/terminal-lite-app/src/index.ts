@@ -1,0 +1,3 @@
+// terminal-lite-app entry point
+// Phase 1 stub — no UI logic yet
+export {};

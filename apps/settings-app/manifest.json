@@ -1,0 +1,28 @@
+{
+  "id": "com.cortexos.settings",
+  "name": "Settings",
+  "version": "1.0.0",
+  "description": "System settings and preferences",
+  "entry_point": "src/index.tsx",
+  "icon": "icon.svg",
+  "permissions": [
+    {
+      "permission": "settings",
+      "required": true,
+      "reason": "Read and modify system settings"
+    }
+  ],
+  "capabilities": {
+    "ai": false,
+    "background_execution": false,
+    "autostart": true,
+    "max_file_size": 104857600,
+    "system_tray": true,
+    "file_handlers": []
+  },
+  "min_os_version": "0.1.0",
+  "author": {
+    "name": "CortexOS Team"
+  },
+  "category": "system"
+}

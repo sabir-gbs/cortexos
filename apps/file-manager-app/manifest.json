@@ -1,0 +1,33 @@
+{
+  "id": "com.cortexos.file-manager",
+  "name": "Files",
+  "version": "1.0.0",
+  "description": "File system browser and manager",
+  "entry_point": "src/index.tsx",
+  "icon": "icon.svg",
+  "permissions": [
+    {
+      "permission": "files.read",
+      "required": true,
+      "reason": "Browse and read files on the system"
+    },
+    {
+      "permission": "files.write",
+      "required": true,
+      "reason": "Create, modify, and delete files"
+    }
+  ],
+  "capabilities": {
+    "ai": false,
+    "background_execution": false,
+    "autostart": false,
+    "max_file_size": 104857600,
+    "system_tray": false,
+    "file_handlers": []
+  },
+  "min_os_version": "0.1.0",
+  "author": {
+    "name": "CortexOS Team"
+  },
+  "category": "system"
+}

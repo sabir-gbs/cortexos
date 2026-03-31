@@ -1,0 +1,2 @@
+-- Schema version tracking table is created by the migration runner.
+-- This migration is a placeholder to reserve the slot.

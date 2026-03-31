@@ -1,0 +1,32 @@
+[package]
+name = "cortex-api"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+cortex-core = { workspace = true }
+cortex-config = { workspace = true }
+cortex-db = { workspace = true }
+cortex-auth = { workspace = true }
+cortex-policy = { workspace = true }
+cortex-settings = { workspace = true }
+cortex-ai = { workspace = true }
+cortex-files = { workspace = true }
+cortex-search = { workspace = true }
+cortex-notify = { workspace = true }
+cortex-observability = { workspace = true }
+cortex-runtime = { workspace = true }
+cortex-sdk = { workspace = true }
+cortex-admin = { workspace = true }
+cortex-wm = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+base64 = { workspace = true }
+rusqlite = { workspace = true }

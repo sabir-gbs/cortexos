@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #1a1a2e;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: #e0e0e0;
+}
+
+.header h1 {
+  font-size: 24px;
+}
+
+.score {
+  font-size: 18px;
+  font-weight: 600;
+  color: #66bb6a;
+}
+
+.status-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.status-text.won {
+  color: #51cf66;
+}
+
+.status-text.lost {
+  color: #ff6b6b;
+}
+
+.restart-btn {
+  padding: 8px 20px;
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  color: #e0e0e0;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.restart-btn:hover {
+  background: #0f3460;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(20, 20px);
+  grid-template-rows: repeat(20, 20px);
+  gap: 1px;
+  background: #16213e;
+  padding: 4px;
+  border-radius: 8px;
+  border: 2px solid #0f3460;
+}
+
+.cell {
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  background: #0d1117;
+}
+
+.cell.snake {
+  background: #66bb6a;
+  border-radius: 3px;
+}
+
+.cell.snake-head {
+  background: #81c784;
+  border-radius: 4px;
+}
+
+.cell.food {
+  background: #ef5350;
+  border-radius: 50%;
+}
+
+.footer {
+  color: #666;
+  font-size: 12px;
+}

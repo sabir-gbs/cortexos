@@ -1,0 +1,42 @@
+# Optional external services for CortexOS development.
+#
+# CortexOS uses SQLite by default, which is bundled via rusqlite and requires
+# no external database service. This file is provided for contributors who
+# want to test against PostgreSQL or use Redis for session caching.
+#
+# Usage: docker compose up -d [service]
+#
+# NOTE: These services are NOT required for normal development. The default
+# SQLite backend works without Docker.
+
+services:
+  # Uncomment to run PostgreSQL instead of SQLite for testing:
+  # postgres:
+  #   image: postgres:17-alpine
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: cortexos
+  #     POSTGRES_PASSWORD: cortexos_dev
+  #     POSTGRES_DB: cortexos
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U cortexos"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+
+  # Uncomment to use Redis for session caching:
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+
+# volumes:
+#   pgdata:
