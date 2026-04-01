@@ -22,6 +22,7 @@ The original live desktop launch flow was broken by multiple stacked issues. The
 4. frontend error handling could hide the real backend cause
 5. desktop icon interaction still relies on double-click, which may be surprising but is currently spec-aligned
 6. the `Files` app now renders, but its initial root-path request still violates the Files API contract and returns `400`
+7. minimizing a focused window hides it visually but leaves it logically focused instead of transferring focus
 
 ## Issues
 
@@ -33,13 +34,15 @@ The original live desktop launch flow was broken by multiple stacked issues. The
 | [ISSUE-004](./ISSUE-004-launch-error-reporting-obscures-the-real-backend-failure.md) | Medium | Launch error reporting obscures the real backend failure |
 | [ISSUE-005](./ISSUE-005-desktop-icon-launch-ux-is-misaligned-with-user-expectations.md) | Medium | Desktop icon launch UX is misaligned with user expectations |
 | [ISSUE-006](./ISSUE-006-file-manager-root-path-contract-mismatch.md) | High | File Manager uses an absolute root path that the Files API rejects |
+| [ISSUE-007](./ISSUE-007-minimized-window-remains-focused-and-focus-does-not-transfer.md) | High | Minimized window remains focused and focus does not transfer |
 
 ## Recommended Fix Order
 
-1. [ISSUE-006](./ISSUE-006-file-manager-root-path-contract-mismatch.md)
-2. [ISSUE-002](./ISSUE-002-successful-app-launches-can-leak-orphan-runtime-instances.md)
-3. [ISSUE-004](./ISSUE-004-launch-error-reporting-obscures-the-real-backend-failure.md)
-4. [ISSUE-005](./ISSUE-005-desktop-icon-launch-ux-is-misaligned-with-user-expectations.md)
+1. [ISSUE-007](./ISSUE-007-minimized-window-remains-focused-and-focus-does-not-transfer.md)
+2. [ISSUE-006](./ISSUE-006-file-manager-root-path-contract-mismatch.md)
+3. [ISSUE-002](./ISSUE-002-successful-app-launches-can-leak-orphan-runtime-instances.md)
+4. [ISSUE-004](./ISSUE-004-launch-error-reporting-obscures-the-real-backend-failure.md)
+5. [ISSUE-005](./ISSUE-005-desktop-icon-launch-ux-is-misaligned-with-user-expectations.md)
 
 ## Primary Evidence Files
 
@@ -50,5 +53,6 @@ The original live desktop launch flow was broken by multiple stacked issues. The
 - [wm.rs](/home/sabir/projects/cortexos/crates/cortex-api/src/routes/wm.rs)
 - [main.rs](/home/sabir/projects/cortexos/crates/cortex-server/src/main.rs)
 - [files.rs](/home/sabir/projects/cortexos/crates/cortex-api/src/routes/files.rs)
+- [wm.rs](/home/sabir/projects/cortexos/crates/cortex-api/src/routes/wm.rs)
 - [sqlite.rs](/home/sabir/projects/cortexos/crates/cortex-wm/src/sqlite.rs)
 - [sqlite.rs](/home/sabir/projects/cortexos/crates/cortex-runtime/src/sqlite.rs)
