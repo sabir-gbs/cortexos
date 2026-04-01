@@ -464,7 +464,7 @@ export default function App() {
 
   // ── Taskbar app click ─────────────────────────────────────────────────────
   const handleTaskbarAppClick = useCallback(
-    async (instanceId: string) => {
+    async (instanceId: string, appId: string) => {
       const win = windows.find((w) => w.instance_id === instanceId && w.state !== "closed");
       if (win) {
         if (win.state === "minimized") {
@@ -480,9 +480,12 @@ export default function App() {
           );
         }
         handleWindowFocus(win.id);
+      } else if (appId) {
+        // No live window — relaunch the app directly from the pinned taskbar icon
+        handleLaunchApp(appId);
       }
     },
-    [windows, authenticated, handleWindowFocus],
+    [windows, authenticated, handleWindowFocus, handleLaunchApp],
   );
 
   // ── Settings update ───────────────────────────────────────────────────────

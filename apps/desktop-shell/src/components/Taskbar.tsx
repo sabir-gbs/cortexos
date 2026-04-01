@@ -18,7 +18,7 @@ interface TaskbarProps {
   clockFormat: "12h" | "24h";
   connected: boolean;
   onLauncherClick: () => void;
-  onAppClick: (instanceId: string) => void;
+  onAppClick: (instanceId: string, appId: string) => void;
   onWorkspaceSwitch: (workspaceId: string) => void;
   onNotificationsClick: () => void;
   onSettingsClick: () => void;
@@ -136,8 +136,7 @@ export function Taskbar({
             key={item.appId}
             className={`taskbar-btn taskbar-app-btn${item.hasFocus ? " focused" : ""}`}
             onClick={() => {
-              if (item.instanceId) onAppClick(item.instanceId);
-              else onLauncherClick();
+              onAppClick(item.instanceId ?? "", item.appId);
             }}
             aria-label={item.name}
             title={item.name}
