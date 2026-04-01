@@ -197,6 +197,8 @@ async fn main() {
         .route("/api/v1/admin/backup", post(admin_backup_handler))
         // ── WebSocket ─────────────────────────────
         .route("/ws", get(ws_handler))
+        // ── Built app static files ────────────────
+        .fallback(serve_app_static)
         // ── Middleware ─────────────────────────────
         .layer(middleware::from_fn_with_state(cors_config, cors_middleware))
         .layer(middleware::from_fn(logging_middleware))
@@ -959,4 +961,103 @@ async fn authenticate(
     cortex_api::middleware::auth::require_auth(state, &token)
         .await
         .map_err(|_| error_response(StatusCode::UNAUTHORIZED, "invalid or expired session"))
+}
+
+/// Serve built app static files.
+///
+/// Maps `/apps/{app-name}/...` to the corresponding `dist/` directory
+/// under the workspace `apps/` folder. For example:
+///   `/apps/file-manager/index.html` → `apps/file-manager-app/dist/index.html`
+async fn serve_app_static(req: axum::extract::Request) -> Response {
+    let path = req.uri().path().to_string();
+
+    // Only handle /apps/* paths
+    let stripped = match path.strip_prefix("/apps/") {
+        Some(p) => p,
+        None => return (StatusCode::NOT_FOUND, "not found").into_response(),
+    };
+
+    // Split into app-name and rest of path
+    // e.g. "file-manager/index.html" → ("file-manager", "index.html")
+    let (app_name, file_path) = match stripped.split_once('/') {
+        Some((name, rest)) => (name, rest),
+        None => return (StatusCode::NOT_FOUND, "not found").into_response(),
+    };
+
+    // Map app URL name to directory name (e.g. "file-manager" → "file-manager-app")
+    let dir_name = app_directory_name(app_name);
+    let workspace_root = std::env::var("CORTEX_WORKSPACE_ROOT").unwrap_or_else(|_| ".".to_string());
+    let full_path = std::path::Path::new(&workspace_root)
+        .join("apps")
+        .join(dir_name)
+        .join("dist")
+        .join(file_path);
+
+    // Prevent directory traversal
+    let canonical = match std::fs::canonicalize(full_path) {
+        Ok(p) => p,
+        Err(_) => return (StatusCode::NOT_FOUND, "not found").into_response(),
+    };
+    let dist_root = std::path::Path::new(&workspace_root)
+        .join("apps")
+        .join(dir_name)
+        .join("dist");
+    let dist_root = match std::fs::canonicalize(dist_root) {
+        Ok(p) => p,
+        Err(_) => return (StatusCode::NOT_FOUND, "not found").into_response(),
+    };
+    if !canonical.starts_with(&dist_root) {
+        return (StatusCode::FORBIDDEN, "forbidden").into_response();
+    }
+
+    let ext = canonical
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(|s| s.to_string());
+
+    let contents = match tokio::fs::read(canonical).await {
+        Ok(c) => c,
+        Err(_) => return (StatusCode::NOT_FOUND, "not found").into_response(),
+    };
+
+    let content_type = match ext.as_deref() {
+        Some("html") => "text/html; charset=utf-8",
+        Some("js") => "application/javascript; charset=utf-8",
+        Some("css") => "text/css; charset=utf-8",
+        Some("json") => "application/json",
+        Some("png") => "image/png",
+        Some("jpg" | "jpeg") => "image/jpeg",
+        Some("svg") => "image/svg+xml",
+        Some("ico") => "image/x-icon",
+        Some("woff") => "font/woff",
+        Some("woff2") => "font/woff2",
+        _ => "application/octet-stream",
+    };
+
+    (
+        StatusCode::OK,
+        [(axum::http::header::CONTENT_TYPE, content_type)],
+        contents,
+    )
+        .into_response()
+}
+
+/// Map URL app name to the actual directory name in the workspace.
+fn app_directory_name(url_name: &str) -> &str {
+    match url_name {
+        "calculator" => "calculator-app",
+        "text-editor" => "text-editor-app",
+        "notes" => "notes-app",
+        "file-manager" => "file-manager-app",
+        "media-viewer" => "media-viewer-app",
+        "terminal-lite" => "terminal-lite-app",
+        "clock-utils" => "clock-utils-app",
+        "settings-app" => "settings-app",
+        "solitaire" => "games/solitaire",
+        "minesweeper" => "games/minesweeper",
+        "snake" => "games/snake",
+        "tetris" => "games/tetris",
+        "chess" => "games/chess",
+        _ => url_name,
+    }
 }

@@ -330,8 +330,9 @@ export default function App() {
       const manifest = BUILTIN_APPS.find((a) => a.id === appId);
       const title = manifest?.name || appId;
 
+      let instance: Awaited<ReturnType<typeof api.launchApp>> | null = null;
       try {
-        const instance = await api.launchApp(appId);
+        instance = await api.launchApp(appId);
         announce(`Launching ${title}`);
 
         // Open a window for the app
@@ -339,19 +340,25 @@ export default function App() {
         const win = await api.openWindow({
           instance_id: instance.instance_id,
           title,
-          x: 100 + Math.random() * 200,
-          y: 50 + Math.random() * 150,
+          x: Math.floor(100 + Math.random() * 200),
+          y: Math.floor(50 + Math.random() * 150),
           width: 800,
           height: 600,
           workspace_id: wsId || undefined,
         });
 
         setWindows((prev) => [...prev, win]);
-        setRunningApps((prev) => [...prev, instance]);
+        setRunningApps((prev) => [...prev, instance!]);
       } catch (err) {
-        announce(
-          `Failed to launch ${title}: ${err instanceof Error ? err.message : "unknown error"}`,
-        );
+        // Stop the runtime instance if window creation failed after launch
+        if (instance) {
+          api.stopApp(instance.instance_id).catch((stopErr) =>
+            console.error("Failed to stop orphan instance:", stopErr),
+          );
+        }
+        const message = err instanceof Error ? err.message : "unknown error";
+        console.error(`Launch failed for ${title}:`, message);
+        announce(`Failed to launch ${title}: ${message}`);
       }
     },
     [authenticated, activeWorkspaceId, announce],

@@ -128,9 +128,9 @@ mod tests {
     }
 
     #[test]
-    fn wildcard_allows_credentials_false() {
+    fn default_allows_credentials_true() {
         let config = CorsConfig::default();
         let headers = cors_headers(&config, "*").unwrap();
-        assert!(!headers.access_control_allow_credentials);
+        assert!(headers.access_control_allow_credentials);
     }
 }

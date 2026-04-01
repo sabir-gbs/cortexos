@@ -37,6 +37,6 @@ test.describe("Desktop Shell", () => {
     // transition to the desktop — but E2E without backend expects failure.
     const alert = page.getByRole("alert");
     await expect(alert).toBeVisible({ timeout: 10_000 });
-    await expect(alert).toContainText(/failed|error|unauthorized|network/i);
+    await expect(alert).toContainText(/failed|error|unauthorized|network|invalid credentials/i);
   });
 });
