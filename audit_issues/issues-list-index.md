@@ -24,6 +24,7 @@ The original live desktop launch flow was broken by multiple stacked issues. The
 6. the `Files` app now renders, but its initial root-path request still violates the Files API contract and returns `400`
 7. minimizing a focused window hides it visually but leaves it logically focused instead of transferring focus
 8. the standalone `Settings` app changes only its local theme state and does not update the shell theme
+9. pinned taskbar icons do not relaunch apps after the last window is closed
 
 ## Issues
 
@@ -37,15 +38,17 @@ The original live desktop launch flow was broken by multiple stacked issues. The
 | [ISSUE-006](./ISSUE-006-file-manager-root-path-contract-mismatch.md) | High | File Manager uses an absolute root path that the Files API rejects |
 | [ISSUE-007](./ISSUE-007-minimized-window-remains-focused-and-focus-does-not-transfer.md) | High | Minimized window remains focused and focus does not transfer |
 | [ISSUE-008](./ISSUE-008-settings-app-theme-controls-are-local-only-and-do-not-update-shell-theme.md) | High | Settings app theme controls are local-only and do not update shell theme |
+| [ISSUE-009](./ISSUE-009-pinned-taskbar-icon-does-not-relaunch-app-after-window-close.md) | High | Pinned taskbar icon does not relaunch app after window close |
 
 ## Recommended Fix Order
 
 1. [ISSUE-007](./ISSUE-007-minimized-window-remains-focused-and-focus-does-not-transfer.md)
 2. [ISSUE-008](./ISSUE-008-settings-app-theme-controls-are-local-only-and-do-not-update-shell-theme.md)
-3. [ISSUE-006](./ISSUE-006-file-manager-root-path-contract-mismatch.md)
-4. [ISSUE-002](./ISSUE-002-successful-app-launches-can-leak-orphan-runtime-instances.md)
-5. [ISSUE-004](./ISSUE-004-launch-error-reporting-obscures-the-real-backend-failure.md)
-6. [ISSUE-005](./ISSUE-005-desktop-icon-launch-ux-is-misaligned-with-user-expectations.md)
+3. [ISSUE-009](./ISSUE-009-pinned-taskbar-icon-does-not-relaunch-app-after-window-close.md)
+4. [ISSUE-006](./ISSUE-006-file-manager-root-path-contract-mismatch.md)
+5. [ISSUE-002](./ISSUE-002-successful-app-launches-can-leak-orphan-runtime-instances.md)
+6. [ISSUE-004](./ISSUE-004-launch-error-reporting-obscures-the-real-backend-failure.md)
+7. [ISSUE-005](./ISSUE-005-desktop-icon-launch-ux-is-misaligned-with-user-expectations.md)
 
 ## Primary Evidence Files
 
