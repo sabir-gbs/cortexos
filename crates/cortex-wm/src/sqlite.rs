@@ -217,7 +217,65 @@ impl WindowManagerService for SqliteWindowManager {
     }
 
     async fn minimize_window(&self, window_id: &str) -> Result<Window> {
-        self.update_state(window_id, "minimized")
+        let wid = window_id.to_string();
+
+        // First, get the window to know its workspace and whether it's focused
+        let win = self.get_window(&wid).await?;
+        let was_focused = win.focused;
+        let wsid_str = win.workspace_id.0.clone();
+        let uid_str = win.user_id.0.to_string();
+
+        // Update state to minimized and clear focus
+        let rows = self.pool.write(|conn| {
+            let rows = conn.execute(
+                "UPDATE windows SET state = 'minimized', focused = 0, updated_at = datetime('now') WHERE id = ?1 AND state != 'closed'",
+                rusqlite::params![wid],
+            ).map_err(|e| DbError::Query(e.to_string()))?;
+            Ok(rows)
+        }).map_err(WmError::Db)?;
+
+        if rows == 0 {
+            let exists: bool = self
+                .pool
+                .read(|conn| {
+                    conn.query_row(
+                        "SELECT COUNT(*) > 0 FROM windows WHERE id = ?1",
+                        [&wid],
+                        |row| row.get(0),
+                    )
+                    .map_err(|e| DbError::Query(e.to_string()))
+                })
+                .unwrap_or(false);
+            if !exists {
+                return Err(WmError::WindowNotFound(window_id.to_string()));
+            }
+            return Err(WmError::InvalidOperation("window is closed".to_string()));
+        }
+
+        // If the minimized window was focused, promote the next visible window
+        if was_focused {
+            self.pool.write(|conn| {
+                // Find the topmost non-minimized, non-closed window in the same workspace
+                let next_id: Option<String> = conn
+                    .query_row(
+                        "SELECT id FROM windows WHERE user_id = ?1 AND workspace_id = ?2 AND state = 'normal' ORDER BY z_index DESC LIMIT 1",
+                        rusqlite::params![uid_str, wsid_str],
+                        |row| row.get(0),
+                    )
+                    .ok();
+
+                if let Some(next_wid) = next_id {
+                    conn.execute(
+                        "UPDATE windows SET focused = 1, updated_at = datetime('now') WHERE id = ?1",
+                        [&next_wid],
+                    ).map_err(|e| DbError::Query(e.to_string()))?;
+                }
+                // If no visible windows remain, no window is focused (correct per spec)
+                Ok(())
+            }).map_err(WmError::Db)?;
+        }
+
+        self.get_window(&wid).await
     }
 
     async fn maximize_window(&self, window_id: &str) -> Result<Window> {
@@ -225,7 +283,47 @@ impl WindowManagerService for SqliteWindowManager {
     }
 
     async fn restore_window(&self, window_id: &str) -> Result<Window> {
-        self.update_state(window_id, "normal")
+        let wid = window_id.to_string();
+
+        // Get the window's user and workspace for focus management
+        let win = self.get_window(&wid).await?;
+        let uid_str = win.user_id.0.to_string();
+        let wsid_str = win.workspace_id.0.clone();
+
+        // Restore to normal state and grab focus
+        let rows = self.pool.write(|conn| {
+            // Unfocus all other windows in the same workspace
+            conn.execute(
+                "UPDATE windows SET focused = 0, updated_at = datetime('now') WHERE user_id = ?1 AND workspace_id = ?2 AND state != 'closed'",
+                rusqlite::params![uid_str, wsid_str],
+            ).map_err(|e| DbError::Query(e.to_string()))?;
+
+            let rows = conn.execute(
+                "UPDATE windows SET state = 'normal', focused = 1, updated_at = datetime('now') WHERE id = ?1 AND state != 'closed'",
+                rusqlite::params![wid],
+            ).map_err(|e| DbError::Query(e.to_string()))?;
+            Ok(rows)
+        }).map_err(WmError::Db)?;
+
+        if rows == 0 {
+            let exists: bool = self
+                .pool
+                .read(|conn| {
+                    conn.query_row(
+                        "SELECT COUNT(*) > 0 FROM windows WHERE id = ?1",
+                        [&wid],
+                        |row| row.get(0),
+                    )
+                    .map_err(|e| DbError::Query(e.to_string()))
+                })
+                .unwrap_or(false);
+            if !exists {
+                return Err(WmError::WindowNotFound(window_id.to_string()));
+            }
+            return Err(WmError::InvalidOperation("window is closed".to_string()));
+        }
+
+        self.get_window(&wid).await
     }
 
     async fn move_window(&self, window_id: &str, req: MoveWindowRequest) -> Result<Window> {
@@ -861,5 +959,234 @@ mod tests {
         let user = test_user();
         let result = wm.switch_workspace(&user, "nonexistent").await;
         assert!(matches!(result, Err(WmError::WorkspaceNotFound(_))));
+    }
+
+    // -- ISSUE-007: minimize/focus regression tests --
+
+    #[tokio::test]
+    async fn minimize_focused_promotes_next_visible() {
+        let wm = test_wm();
+        let user = test_user();
+
+        let win1 = wm
+            .open_window(
+                &user,
+                OpenWindowRequest {
+                    instance_id: test_instance_id(),
+                    title: "Win 1".into(),
+                    x: 0,
+                    y: 0,
+                    width: 400,
+                    height: 300,
+                    workspace_id: None,
+                },
+            )
+            .await
+            .unwrap();
+
+        let win2 = wm
+            .open_window(
+                &user,
+                OpenWindowRequest {
+                    instance_id: test_instance_id(),
+                    title: "Win 2".into(),
+                    x: 0,
+                    y: 0,
+                    width: 400,
+                    height: 300,
+                    workspace_id: None,
+                },
+            )
+            .await
+            .unwrap();
+
+        // win2 is focused (last opened)
+        assert!(wm.get_window(&win2.id.0).await.unwrap().focused);
+        assert!(!wm.get_window(&win1.id.0).await.unwrap().focused);
+
+        // Minimize win2 (focused) — win1 should be promoted
+        let minimized = wm.minimize_window(&win2.id.0).await.unwrap();
+        assert_eq!(minimized.state, WindowState::Minimized);
+        assert!(!minimized.focused, "minimized window must not be focused");
+
+        let promoted = wm.get_window(&win1.id.0).await.unwrap();
+        assert!(
+            promoted.focused,
+            "next topmost visible window should gain focus"
+        );
+        assert_eq!(promoted.state, WindowState::Normal);
+    }
+
+    #[tokio::test]
+    async fn minimize_nonfocused_preserves_focus() {
+        let wm = test_wm();
+        let user = test_user();
+
+        let win1 = wm
+            .open_window(
+                &user,
+                OpenWindowRequest {
+                    instance_id: test_instance_id(),
+                    title: "Win 1".into(),
+                    x: 0,
+                    y: 0,
+                    width: 400,
+                    height: 300,
+                    workspace_id: None,
+                },
+            )
+            .await
+            .unwrap();
+
+        let win2 = wm
+            .open_window(
+                &user,
+                OpenWindowRequest {
+                    instance_id: test_instance_id(),
+                    title: "Win 2".into(),
+                    x: 0,
+                    y: 0,
+                    width: 400,
+                    height: 300,
+                    workspace_id: None,
+                },
+            )
+            .await
+            .unwrap();
+
+        // Focus win1 explicitly (win2 was auto-focused on open)
+        wm.focus_window(&win1.id.0).await.unwrap();
+        assert!(wm.get_window(&win1.id.0).await.unwrap().focused);
+
+        // Minimize win2 (NOT focused) — win1 should stay focused
+        let minimized = wm.minimize_window(&win2.id.0).await.unwrap();
+        assert_eq!(minimized.state, WindowState::Minimized);
+        assert!(!minimized.focused);
+
+        let still_focused = wm.get_window(&win1.id.0).await.unwrap();
+        assert!(
+            still_focused.focused,
+            "unrelated focused window must remain focused"
+        );
+    }
+
+    #[tokio::test]
+    async fn minimize_all_yields_no_focus() {
+        let wm = test_wm();
+        let user = test_user();
+
+        let win1 = wm
+            .open_window(
+                &user,
+                OpenWindowRequest {
+                    instance_id: test_instance_id(),
+                    title: "Win 1".into(),
+                    x: 0,
+                    y: 0,
+                    width: 400,
+                    height: 300,
+                    workspace_id: None,
+                },
+            )
+            .await
+            .unwrap();
+
+        let win2 = wm
+            .open_window(
+                &user,
+                OpenWindowRequest {
+                    instance_id: test_instance_id(),
+                    title: "Win 2".into(),
+                    x: 0,
+                    y: 0,
+                    width: 400,
+                    height: 300,
+                    workspace_id: None,
+                },
+            )
+            .await
+            .unwrap();
+
+        // Minimize win2 (focused) — win1 promoted
+        wm.minimize_window(&win2.id.0).await.unwrap();
+        assert!(wm.get_window(&win1.id.0).await.unwrap().focused);
+
+        // Minimize win1 — no visible windows remain
+        let minimized = wm.minimize_window(&win1.id.0).await.unwrap();
+        assert!(
+            !minimized.focused,
+            "last minimized window must not be focused"
+        );
+
+        // Verify no window is focused
+        let uid_str = user.0.to_string();
+        let active_ws = wm.get_active_workspace(&user).await.unwrap();
+        let wsid_str = active_ws.id.0.clone();
+        let any_focused: bool = wm.pool.read(|conn| {
+            conn.query_row(
+                "SELECT COUNT(*) > 0 FROM windows WHERE user_id = ?1 AND workspace_id = ?2 AND focused = 1 AND state != 'closed'",
+                rusqlite::params![uid_str, wsid_str],
+                |row| row.get(0),
+            ).map_err(|e| cortex_db::error::DbError::Query(e.to_string()))
+        }).unwrap();
+        assert!(
+            !any_focused,
+            "no window should be focused when all are minimized"
+        );
+    }
+
+    #[tokio::test]
+    async fn restore_minimized_grants_focus() {
+        let wm = test_wm();
+        let user = test_user();
+
+        let win1 = wm
+            .open_window(
+                &user,
+                OpenWindowRequest {
+                    instance_id: test_instance_id(),
+                    title: "Win 1".into(),
+                    x: 0,
+                    y: 0,
+                    width: 400,
+                    height: 300,
+                    workspace_id: None,
+                },
+            )
+            .await
+            .unwrap();
+
+        let win2 = wm
+            .open_window(
+                &user,
+                OpenWindowRequest {
+                    instance_id: test_instance_id(),
+                    title: "Win 2".into(),
+                    x: 0,
+                    y: 0,
+                    width: 400,
+                    height: 300,
+                    workspace_id: None,
+                },
+            )
+            .await
+            .unwrap();
+
+        // Minimize both
+        wm.minimize_window(&win2.id.0).await.unwrap();
+        wm.minimize_window(&win1.id.0).await.unwrap();
+
+        // Restore win1 — should become focused
+        let restored = wm.restore_window(&win1.id.0).await.unwrap();
+        assert_eq!(restored.state, WindowState::Normal);
+        assert!(restored.focused, "restored window must gain focus");
+
+        // win2 should still be minimized and not focused
+        let w2 = wm.get_window(&win2.id.0).await;
+        // win2 is minimized so get_window won't find it (excludes closed, but minimized is visible)
+        // Actually get_window filters state != 'closed', so minimized windows ARE returned
+        let w2 = w2.unwrap();
+        assert_eq!(w2.state, WindowState::Minimized);
+        assert!(!w2.focused);
     }
 }
