@@ -12,13 +12,13 @@ Current docs still state or imply the old repo state:
 
 - [AGENTS.md](/home/sabir/projects/cortexos/AGENTS.md)
 - [CLAUDE.md](/home/sabir/projects/cortexos/CLAUDE.md)
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md)
-- [IMPLEMENTATION_KICKOFF.md](/home/sabir/projects/cortexos/IMPLEMENTATION_KICKOFF.md)
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md)
+- [IMPLEMENTATION_KICKOFF.md](/home/sabir/projects/cortexos/docs/guides/IMPLEMENTATION_KICKOFF.md)
 
 Examples observed:
 
 - [AGENTS.md](/home/sabir/projects/cortexos/AGENTS.md): says the repository is currently spec-first and that the only substantive assets are `CLAUDE.md` and `docs/specs/*.md`
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md): says the Rust workspace, pnpm workspace, backend crates, frontend apps, and CI do not yet materially exist
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md): says the Rust workspace, pnpm workspace, backend crates, frontend apps, and CI do not yet materially exist
 - [CLAUDE.md](/home/sabir/projects/cortexos/CLAUDE.md): says the codebase is not yet established
 
 Actual repository state now includes:
@@ -58,6 +58,6 @@ Update the top-level guidance docs to:
 
 - [AGENTS.md](/home/sabir/projects/cortexos/AGENTS.md)
 - [CLAUDE.md](/home/sabir/projects/cortexos/CLAUDE.md)
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md)
-- [IMPLEMENTATION_KICKOFF.md](/home/sabir/projects/cortexos/IMPLEMENTATION_KICKOFF.md)
-- [DOCUMENTATION_INDEX.md](/home/sabir/projects/cortexos/DOCUMENTATION_INDEX.md)
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md)
+- [IMPLEMENTATION_KICKOFF.md](/home/sabir/projects/cortexos/docs/guides/IMPLEMENTATION_KICKOFF.md)
+- [DOCUMENTATION_INDEX.md](/home/sabir/projects/cortexos/docs/guides/DOCUMENTATION_INDEX.md)

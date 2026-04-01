@@ -8,7 +8,7 @@ There is a top-level documentation file that is not linked from the primary docu
 
 ## Evidence
 
-[open-task-list.md](/home/sabir/projects/cortexos/open-task-list.md) claims, among other things:
+[open-task-list.md](/home/sabir/projects/cortexos/docs/status/open-task-list.md) claims, among other things:
 
 - `cargo clippy --workspace` passes
 - `pnpm typecheck` passes
@@ -22,7 +22,7 @@ These claims conflict with current audit evidence:
 - `pnpm -r typecheck` fails in `apps/notes-app`
 - the repo still contains documented placeholder/stub behavior in core user-facing paths
 
-The file is also absent from [DOCUMENTATION_INDEX.md](/home/sabir/projects/cortexos/DOCUMENTATION_INDEX.md), which means there is no clear control-plane status for whether it is authoritative, stale, historical, or private scratch documentation.
+The file is also absent from [DOCUMENTATION_INDEX.md](/home/sabir/projects/cortexos/docs/guides/DOCUMENTATION_INDEX.md), which means there is no clear control-plane status for whether it is authoritative, stale, historical, or private scratch documentation.
 
 ## Expected Contract
 
@@ -45,5 +45,5 @@ Top-level docs that assert completion or verification status must be:
 
 ## Affected Files
 
-- [open-task-list.md](/home/sabir/projects/cortexos/open-task-list.md)
-- [DOCUMENTATION_INDEX.md](/home/sabir/projects/cortexos/DOCUMENTATION_INDEX.md)
+- [open-task-list.md](/home/sabir/projects/cortexos/docs/status/open-task-list.md)
+- [DOCUMENTATION_INDEX.md](/home/sabir/projects/cortexos/docs/guides/DOCUMENTATION_INDEX.md)

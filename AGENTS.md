@@ -47,8 +47,8 @@ See `change_requests/INDEX.md` for the full audit history.
 
 Read these before making meaningful changes:
 
-1. `DOCUMENTATION_INDEX.md`
-2. `MASTER_IMPLEMENTATION_BRIEF.md`
+1. `docs/guides/DOCUMENTATION_INDEX.md`
+2. `docs/guides/MASTER_IMPLEMENTATION_BRIEF.md`
 3. `docs/specs/00_master_spec.md`
 4. `docs/specs/01_repository_toolchain_engineering_conventions.md`
 5. `docs/specs/appendix_c_definition_of_done.md`

@@ -29,7 +29,7 @@ Desktop shell client code in [apps/desktop-shell/src/api.ts](/home/sabir/project
 The reconciled spec language instead says:
 
 - [AGENTS.md](/home/sabir/projects/cortexos/AGENTS.md): API routes should follow `/api/v1/<domain>/<action>`
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md): window manager client mutations go through the command bus, not ad hoc client REST
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md): window manager client mutations go through the command bus, not ad hoc client REST
 - [docs/specs/08_window_manager.md](/home/sabir/projects/cortexos/docs/specs/08_window_manager.md): browser clients issue realtime window mutations through command bus commands; HTTP is limited to bootstrap/snapshot reads
 
 ## Expected Contract

@@ -10,8 +10,8 @@ The implementation planning stack still reads like a pre-build execution plan ev
 
 Examples:
 
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md): instructs a fresh implementation run to begin with Phase 1 bootstrap
-- [IMPLEMENTATION_PHASES.md](/home/sabir/projects/cortexos/IMPLEMENTATION_PHASES.md): documents the sequence but does not map current repo artifacts to actual completion status
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md): instructs a fresh implementation run to begin with Phase 1 bootstrap
+- [IMPLEMENTATION_PHASES.md](/home/sabir/projects/cortexos/docs/guides/IMPLEMENTATION_PHASES.md): documents the sequence but does not map current repo artifacts to actual completion status
 - phase docs/checklists were written as planning docs before the current codebase existed
 
 Actual repo now contains:
@@ -45,7 +45,7 @@ Once real code exists, planning docs should either:
 
 ## Affected Files
 
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md)
-- [IMPLEMENTATION_KICKOFF.md](/home/sabir/projects/cortexos/IMPLEMENTATION_KICKOFF.md)
-- [IMPLEMENTATION_PHASES.md](/home/sabir/projects/cortexos/IMPLEMENTATION_PHASES.md)
-- [IMPLEMENTATION_PHASE_CHECKLISTS.md](/home/sabir/projects/cortexos/IMPLEMENTATION_PHASE_CHECKLISTS.md)
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md)
+- [IMPLEMENTATION_KICKOFF.md](/home/sabir/projects/cortexos/docs/guides/IMPLEMENTATION_KICKOFF.md)
+- [IMPLEMENTATION_PHASES.md](/home/sabir/projects/cortexos/docs/guides/IMPLEMENTATION_PHASES.md)
+- [IMPLEMENTATION_PHASE_CHECKLISTS.md](/home/sabir/projects/cortexos/docs/guides/IMPLEMENTATION_PHASE_CHECKLISTS.md)

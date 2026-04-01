@@ -45,8 +45,8 @@ pnpm -r build
 
 ## Architecture
 
-Use `MASTER_IMPLEMENTATION_BRIEF.md` as the top-level execution reference for building CortexOS.
-Use `DOCUMENTATION_INDEX.md` as the one-page link map for every spec, planning doc, and checklist.
+Use `docs/guides/MASTER_IMPLEMENTATION_BRIEF.md` as the top-level execution reference for building CortexOS.
+Use `docs/guides/DOCUMENTATION_INDEX.md` as the one-page link map for every spec, planning doc, and checklist.
 
 ## Build & Test Commands
 

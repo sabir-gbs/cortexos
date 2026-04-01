@@ -20,8 +20,8 @@ Current gate results from this audit:
 But these docs still say failures remain:
 
 - [AGENTS.md](/home/sabir/projects/cortexos/AGENTS.md)
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md)
-- [open-task-list.md](/home/sabir/projects/cortexos/open-task-list.md)
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md)
+- [open-task-list.md](/home/sabir/projects/cortexos/docs/status/open-task-list.md)
 - [change_requests/INDEX.md](/home/sabir/projects/cortexos/change_requests/INDEX.md)
 
 ## Why This Matters

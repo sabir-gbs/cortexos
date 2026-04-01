@@ -17,7 +17,7 @@ Severity: Medium
   - verifies login screen rendering
   - verifies login submission fails cleanly when backend is unavailable
   - does not verify successful authenticated shell bootstrap against a live backend
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md)
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md)
   - says Playwright covers the “shell login flow”
 - [FOLLOW_UP_CR-004](./FOLLOW_UP_CR-004-release-gates-still-missing-real-browser-e2e-and-cargo-audit.md)
   - archival header says Playwright has 3 passing tests covering shell login flow

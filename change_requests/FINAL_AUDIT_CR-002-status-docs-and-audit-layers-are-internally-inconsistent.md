@@ -15,10 +15,10 @@ Still-stale status docs:
 - [AGENTS.md](/home/sabir/projects/cortexos/AGENTS.md)
   - says `cargo audit` is not yet run in CI
   - says no real browser automation E2E exists
-- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/MASTER_IMPLEMENTATION_BRIEF.md)
+- [MASTER_IMPLEMENTATION_BRIEF.md](/home/sabir/projects/cortexos/docs/guides/MASTER_IMPLEMENTATION_BRIEF.md)
   - says `cargo audit` is not yet in CI
   - says no real browser E2E exists
-- [open-task-list.md](/home/sabir/projects/cortexos/open-task-list.md)
+- [open-task-list.md](/home/sabir/projects/cortexos/docs/status/open-task-list.md)
   - repeats the same outdated claims
 
 Newer docs claiming completion:
