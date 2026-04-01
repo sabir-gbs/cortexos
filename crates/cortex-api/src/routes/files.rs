@@ -52,10 +52,29 @@ fn entry_to_response(e: &cortex_files::types::FileEntry) -> FileEntryResponse {
     }
 }
 
+/// Normalize a path for the virtual filesystem API.
+///
+/// The virtual filesystem uses relative paths internally, but API consumers
+/// (especially browser apps) naturally use absolute-looking paths like
+/// `"/"` for root or `"/docs/notes.txt"` for nested items. This function
+/// strips a leading `/` so the path passes `VirtualPath` validation.
+///
+/// For the root directory (empty after stripping), returns `"."` — a valid
+/// `VirtualPath` that won't match any file entry, causing `resolve_path` to
+/// return `None` and `list()` to query `WHERE parent_id IS NULL`.
+fn normalize_path(path: &str) -> &str {
+    let stripped = path.strip_prefix('/').unwrap_or(path);
+    if stripped.is_empty() {
+        "." // root sentinel
+    } else {
+        stripped
+    }
+}
+
 /// List directory contents.
 pub async fn list(state: &AppState, path: &str) -> Result<SuccessResponse<Vec<FileEntryResponse>>> {
-    let vpath =
-        VirtualPath::new(path).map_err(|e| ApiError::BadRequest(format!("invalid path: {e}")))?;
+    let vpath = VirtualPath::new(normalize_path(path))
+        .map_err(|e| ApiError::BadRequest(format!("invalid path: {e}")))?;
 
     let entries = state
         .files
@@ -73,8 +92,8 @@ pub async fn list(state: &AppState, path: &str) -> Result<SuccessResponse<Vec<Fi
 
 /// Read file content.
 pub async fn read(state: &AppState, path: &str) -> Result<SuccessResponse<FileContentResponse>> {
-    let vpath =
-        VirtualPath::new(path).map_err(|e| ApiError::BadRequest(format!("invalid path: {e}")))?;
+    let vpath = VirtualPath::new(normalize_path(path))
+        .map_err(|e| ApiError::BadRequest(format!("invalid path: {e}")))?;
 
     let content = state.files.read(&vpath).await.map_err(|e| match e {
         cortex_files::FilesError::NotFound(msg) => ApiError::NotFound(msg),
@@ -97,7 +116,7 @@ pub async fn write(
     state: &AppState,
     req: WriteFileRequest,
 ) -> Result<SuccessResponse<FileEntryResponse>> {
-    let vpath = VirtualPath::new(&req.path)
+    let vpath = VirtualPath::new(normalize_path(&req.path))
         .map_err(|e| ApiError::BadRequest(format!("invalid path: {e}")))?;
 
     let data = base64_decode(&req.content_base64)
@@ -117,8 +136,8 @@ pub async fn write(
 
 /// Delete a file or directory.
 pub async fn delete(state: &AppState, path: &str) -> Result<SuccessResponse<()>> {
-    let vpath =
-        VirtualPath::new(path).map_err(|e| ApiError::BadRequest(format!("invalid path: {e}")))?;
+    let vpath = VirtualPath::new(normalize_path(path))
+        .map_err(|e| ApiError::BadRequest(format!("invalid path: {e}")))?;
 
     state.files.delete(&vpath).await.map_err(|e| match e {
         cortex_files::FilesError::NotFound(msg) => ApiError::NotFound(msg),
@@ -137,9 +156,9 @@ pub async fn move_file(
     from: &str,
     to: &str,
 ) -> Result<SuccessResponse<FileEntryResponse>> {
-    let from_path = VirtualPath::new(from)
+    let from_path = VirtualPath::new(normalize_path(from))
         .map_err(|e| ApiError::BadRequest(format!("invalid source path: {e}")))?;
-    let to_path = VirtualPath::new(to)
+    let to_path = VirtualPath::new(normalize_path(to))
         .map_err(|e| ApiError::BadRequest(format!("invalid destination path: {e}")))?;
 
     let entry = state
@@ -167,4 +186,45 @@ fn base64_encode(data: &[u8]) -> String {
 fn base64_decode(s: &str) -> std::result::Result<Vec<u8>, String> {
     use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
     BASE64.decode(s).map_err(|e| format!("{e}"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_root_slash() {
+        assert_eq!(normalize_path("/"), ".");
+    }
+
+    #[test]
+    fn normalize_empty_string() {
+        assert_eq!(normalize_path(""), ".");
+    }
+
+    #[test]
+    fn normalize_absolute_path() {
+        assert_eq!(normalize_path("/docs/notes.txt"), "docs/notes.txt");
+    }
+
+    #[test]
+    fn normalize_relative_path_unchanged() {
+        assert_eq!(normalize_path("docs/notes.txt"), "docs/notes.txt");
+    }
+
+    #[test]
+    fn normalize_single_slash_path() {
+        assert_eq!(normalize_path("/readme.txt"), "readme.txt");
+    }
+
+    #[test]
+    fn root_sentinel_is_valid_virtual_path() {
+        // The root sentinel "." must be a valid VirtualPath
+        assert!(VirtualPath::new(normalize_path("/")).is_ok());
+    }
+
+    #[test]
+    fn normalized_absolute_path_is_valid_virtual_path() {
+        assert!(VirtualPath::new(normalize_path("/docs/notes.txt")).is_ok());
+    }
 }

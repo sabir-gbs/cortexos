@@ -907,4 +907,37 @@ mod tests {
             assert_eq!(entry.mime_type, expected_mime, "wrong MIME type for {name}");
         }
     }
+
+    #[tokio::test]
+    async fn list_root_directory() {
+        let svc = setup();
+
+        // Create some root-level entries
+        svc.create_directory(&VirtualPath::new("Documents").unwrap())
+            .unwrap();
+        svc.write(&VirtualPath::new("readme.txt").unwrap(), b"hello")
+            .await
+            .unwrap();
+
+        // Use "." as the canonical root sentinel — resolve_path won't find
+        // any file named "." so it returns None, and list() queries
+        // parent_id IS NULL (root-level entries).
+        let root = VirtualPath::new(".").unwrap();
+        let entries = svc.list(&root).await.unwrap();
+
+        assert_eq!(entries.len(), 2);
+        let names: Vec<&str> = entries.iter().map(|e| e.name.as_str()).collect();
+        assert!(names.contains(&"Documents"));
+        assert!(names.contains(&"readme.txt"));
+    }
+
+    #[tokio::test]
+    async fn list_root_empty() {
+        let svc = setup();
+
+        // Root with no entries should return empty list
+        let root = VirtualPath::new(".").unwrap();
+        let entries = svc.list(&root).await.unwrap();
+        assert!(entries.is_empty());
+    }
 }
